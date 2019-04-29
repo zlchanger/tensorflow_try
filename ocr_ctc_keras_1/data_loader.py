@@ -117,28 +117,30 @@ class DataLoader:
         while True:
             if self.currIdx + self.batchSize > len(self.samples):
                 self.trainSet()
-
             batchRange = range(self.currIdx, self.currIdx + self.batchSize)
             gtTexts = [self.samples[i].gtText for i in batchRange]
-            imgs = [
-                preprocess(cv2.imread(self.samples[i].filePath, cv2.IMREAD_GRAYSCALE), self.imgSize,
-                           self.dataAugmentation)
-                for i in batchRange]
-            self.currIdx += self.batchSize
-            batch = Batch(gtTexts, imgs)
 
+            X_data = np.ones([self.batchSize, self.imgSize[0], self.imgSize[1], 1])  # (bs, 128, 64, 1)
             Y_data = np.full([self.batchSize, self.maxTextLen], len(self.charList))
             input_length = np.ones((self.batchSize, 1))
             label_length = np.zeros((self.batchSize, 1))
 
             for i in range(len(gtTexts)):
+                img = preprocess(cv2.imread(self.samples[self.currIdx + i].filePath, cv2.IMREAD_GRAYSCALE),
+                                 self.imgSize,
+                                 self.dataAugmentation)
+                X_data[i] = img
                 word = self.make_target(gtTexts[i])
                 Y_data[i, 0:len(word)] = word
                 label_length[i] = len(word)
                 input_length[i] = self.imgSize[0] // downsample_factor - 2
 
+                print(gtTexts[i], '---', self.samples[self.currIdx + i].filePath)
+
+            self.currIdx += self.batchSize
+
             inputs = {
-                'the_input': batch.imgs,  # (bs, 128, 64, 1)
+                'the_input': X_data,  # (bs, 128, 64, 1)
                 'the_labels': Y_data,
                 'input_length': input_length,
                 'label_length': label_length
@@ -152,24 +154,28 @@ class DataLoader:
                 self.validationSet()
             batchRange = range(self.currIdxVal, self.currIdxVal + self.batchSize)
             gtTexts = [self.valSamples[i].gtText for i in batchRange]
-            imgs = [
-                preprocess(cv2.imread(self.valSamples[i].filePath, cv2.IMREAD_GRAYSCALE), self.imgSize,
-                           self.dataAugmentation)
-                for i in batchRange]
-            batch = Batch(gtTexts, imgs)
 
-            Y_data = np.full([len(self.batchSize), self.maxTextLen], len(self.charList))
-            input_length = np.ones((len(self.batchSize), 1))
-            label_length = np.zeros((len(self.batchSize), 1))
+            X_data = np.ones([self.batchSize, self.imgSize[0], self.imgSize[1], 1])  # (bs, 128, 64, 1)
+            Y_data = np.full([self.batchSize, self.maxTextLen], len(self.charList))
+            input_length = np.ones((self.batchSize, 1))
+            label_length = np.zeros((self.batchSize, 1))
 
             for i in range(len(gtTexts)):
-                word = gtTexts[i]
+                img = preprocess(cv2.imread(self.valSamples[self.currIdxVal + i].filePath, cv2.IMREAD_GRAYSCALE),
+                                 self.imgSize,
+                                 self.dataAugmentation)
+                X_data[i] = img
+                word = self.make_target(gtTexts[i])
                 Y_data[i, 0:len(word)] = word
                 label_length[i] = len(word)
                 input_length[i] = self.imgSize[0] // downsample_factor - 2
 
+                print(gtTexts[i], '---', self.valSamples[self.currIdxVal + i].filePath)
+
+            self.currIdxVal += self.batchSize
+
             inputs = {
-                'the_input': batch.imgs,  # (bs, 128, 64, 1)
+                'the_input': X_data,  # (bs, 128, 64, 1)
                 'the_labels': Y_data,
                 'input_length': input_length,
                 'label_length': label_length

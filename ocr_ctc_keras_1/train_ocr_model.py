@@ -16,12 +16,13 @@ from ocr_ctc_keras_1.data_loader import DataLoader
 
 
 filePath = '../data/'
+lr = 0.0001
 
 loader = DataLoader(filePath, 50, (128,64), 32)
 
 orcNetWork = OCRNetWork(num_classes=80, max_string_len=32, shape=(128, 64, 1), time_dense_size=64, GRU=True,
                  n_units=256)
-model = orcNetWork.get_model()
+model = orcNetWork.get_model(training=True)
 
 try:
     model.load_weights('../checkPoints/LSTM+BN4--26--0.011.hdf5')
@@ -30,9 +31,10 @@ except Exception:
     print("...New weight data...")
     pass
 
-# optimizer = keras.optimizers.Adam(lr=lr, beta_1=0.5, beta_2=0.999, clipnorm=5)
+optimizer = keras.optimizers.Adam(lr=lr, beta_1=0.5, beta_2=0.999, clipnorm=5)
+# optimizer = keras.optimizers.Adadelta()
 
-model.compile(loss={"ctc": lambda y_true, y_pred: y_pred}, optimizer=keras.optimizers.Adadelta())
+model.compile(loss={"ctc": lambda y_true, y_pred: y_pred}, optimizer=optimizer)
 
 callbacks = [
     tf.keras.callbacks.ModelCheckpoint(filepath='../checkPoints/LSTM+BN5--{epoch:02d}--{loss:.3f}.hdf5', monitor='loss',

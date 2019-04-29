@@ -37,7 +37,7 @@ class OCRNetWork(object):
                 self.pooling_counter_w += 1
         return keras.layers.Dropout(0.1)(x)
 
-    def get_model(self):
+    def get_model(self,training):
         self.pooling_counter_h, self.pooling_counter_w = 0, 0
         inputs = keras.layers.Input(name='the_input', shape=self.shape, dtype='float32')  # 128x64x1
 
@@ -82,9 +82,11 @@ class OCRNetWork(object):
             [y_pred, labels, input_length, label_length])
         outputs = [loss_out]
 
-        model = keras.Model(inputs=[inputs, labels, input_length, label_length], outputs=outputs)
-        return model
-
+        if training:
+            model = keras.Model(inputs=[inputs, labels, input_length, label_length], outputs=outputs)
+            return model
+        else:
+            return keras.Model(inputs=[inputs], outputs=y_pred)
 
 def ctc_lambda_func(args):
     y_pred, labels, input_length, label_length = args
