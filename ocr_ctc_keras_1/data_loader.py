@@ -12,7 +12,10 @@ import os, random
 import numpy as np
 import cv2
 from SamplePreprocessor import preprocess
+from log_config import LogConfig
 
+log_type = "file"
+logger = LogConfig(log_type).getLogger()
 
 class Sample:
     def __init__(self, gtText, filePath):
@@ -125,6 +128,7 @@ class DataLoader:
             input_length = np.ones((self.batchSize, 1))
             label_length = np.zeros((self.batchSize, 1))
 
+            logger.info("-----------")
             for i in range(len(gtTexts)):
                 img = preprocess(cv2.imread(self.samples[self.currIdx + i].filePath, cv2.IMREAD_GRAYSCALE),
                                  self.imgSize,
@@ -135,7 +139,7 @@ class DataLoader:
                 label_length[i] = len(word)
                 input_length[i] = self.imgSize[0] // downsample_factor - 2
 
-                print(gtTexts[i], '---', self.samples[self.currIdx + i].filePath)
+                logger.info(gtTexts[i], '---', self.samples[self.currIdx + i].filePath)
 
             self.currIdx += self.batchSize
 
@@ -160,6 +164,7 @@ class DataLoader:
             input_length = np.ones((self.batchSize, 1))
             label_length = np.zeros((self.batchSize, 1))
 
+            logger.info("-----------")
             for i in range(len(gtTexts)):
                 img = preprocess(cv2.imread(self.valSamples[self.currIdxVal + i].filePath, cv2.IMREAD_GRAYSCALE),
                                  self.imgSize,
@@ -170,7 +175,7 @@ class DataLoader:
                 label_length[i] = len(word)
                 input_length[i] = self.imgSize[0] // downsample_factor - 2
 
-                print(gtTexts[i], '---', self.valSamples[self.currIdxVal + i].filePath)
+                logger.info(gtTexts[i], '---', self.valSamples[self.currIdxVal + i].filePath)
 
             self.currIdxVal += self.batchSize
 
