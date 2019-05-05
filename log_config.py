@@ -31,7 +31,7 @@ class LogConfig:
             # 操作系统本身不允许文件名包含:等特殊字符，所以这里也不要用，不然赋给filename时会报错
             nowTime = datetime.datetime.now().strftime('%Y-%m-%d')
 
-            file_name = f'./log/{nowTime}.log'
+            file_name = "./log/'%s'.log" % (nowTime)
             file_handler = logging.FileHandler(filename=file_name, encoding='utf-8', mode='a')
             # level----指定打印的日志等级；默认为WARNING；可为NOTSET、DEBUG、INFO、WARNING、ERROR、CRITICAL
             # format----指定整条日志的格式；这里设置为“时间-等级-日志内容”

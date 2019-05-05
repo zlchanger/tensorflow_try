@@ -139,7 +139,9 @@ class DataLoader:
                 label_length[i] = len(word)
                 input_length[i] = self.imgSize[0] // downsample_factor - 2
 
-                logger.info(gtTexts[i], '---', self.samples[self.currIdx + i].filePath)
+                msg = gtTexts[i]+'---'+self.samples[self.currIdx + i].filePath
+
+                logger.info(msg)
 
             self.currIdx += self.batchSize
 
