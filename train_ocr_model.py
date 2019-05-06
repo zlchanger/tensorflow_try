@@ -8,25 +8,23 @@
 @file: train_ocr_model.py
 @time: 2019-04-27 15:04
 """
-import sys
-sys.path.append('../')
-from ocr_ctc_keras_1.ocr_model import OCRNetWork
+
+import ocr_model,data_loader
 import tensorflow as tf
 from tensorflow import keras
-from ocr_ctc_keras_1.data_loader import DataLoader
 
 
-filePath = '../data/'
+filePath = './data/'
 lr = 0.0001
 
-loader = DataLoader(filePath, 50, (128,64), 32)
+loader = data_loader.DataLoader(filePath, 50, (128,64), 32)
 
-orcNetWork = OCRNetWork(num_classes=80, max_string_len=32, shape=(128, 64, 1), time_dense_size=64, GRU=True,
+orcNetWork = ocr_model.OCRNetWork(num_classes=80, max_string_len=32, shape=(128, 64, 1), time_dense_size=64, GRU=True,
                  n_units=256)
 model = orcNetWork.get_model(training=True)
 
 try:
-    model.load_weights('../checkPoints/LSTM+BN4--26--0.011.hdf5')
+    model.load_weights('./checkPoints/LSTM+BN4--26--0.011.hdf5')
     print("...Previous weight data...")
 except Exception:
     print("...New weight data...")
@@ -38,7 +36,7 @@ optimizer = keras.optimizers.Adam(lr=lr, beta_1=0.5, beta_2=0.999, clipnorm=5)
 model.compile(loss={"ctc": lambda y_true, y_pred: y_pred}, optimizer=optimizer)
 
 callbacks = [
-    tf.keras.callbacks.ModelCheckpoint(filepath='../checkPoints/LSTM+BN5--{epoch:02d}--{loss:.3f}.hdf5', monitor='loss',
+    tf.keras.callbacks.ModelCheckpoint(filepath='./checkPoints/LSTM+BN5--{epoch:02d}--{loss:.3f}.hdf5', monitor='loss',
                                        verbose=1, mode='min', period=1)
 ]
 

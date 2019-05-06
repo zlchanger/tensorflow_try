@@ -37,6 +37,8 @@ train_images = train_images / 255.0
 
 test_images = test_images / 255.0
 
+model = tf.keras.utils.multi_gpu_model(model,2)
+
 model.compile(optimizer=tf.train.AdamOptimizer(),
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])

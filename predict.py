@@ -9,13 +9,13 @@
 @time: 2019-04-24 09:46
 """
 
-from ocr_ctc_keras_1.ocr_model import OCRNetWork
+from ocr_model import OCRNetWork
 import tensorflow as tf
 import cv2
 import numpy as np
 from SamplePreprocessor import preprocess
 import itertools
-from ocr_ctc_keras_1.data_loader import DataLoader
+from data_loader import DataLoader
 
 filePath = '../data/'
 

@@ -196,6 +196,6 @@ class DataLoader:
 
 
 if __name__ == '__main__':
-    filePath = '../data/'
+    filePath = './data/'
     loader = DataLoader(filePath, 50, (128, 64), 32)
     loader.get_next_batch(4)
