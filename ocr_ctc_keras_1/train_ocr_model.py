@@ -8,7 +8,8 @@
 @file: train_ocr_model.py
 @time: 2019-04-27 15:04
 """
-
+import sys
+sys.path.append('../')
 from ocr_ctc_keras_1.ocr_model import OCRNetWork
 import tensorflow as tf
 from tensorflow import keras
