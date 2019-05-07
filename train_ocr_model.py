@@ -17,9 +17,9 @@ from tensorflow import keras
 filePath = './data/'
 lr = 0.0001
 
-loader = data_loader.DataLoader(filePath, 50, (128,64), 32)
+loader = data_loader.DataLoader(filePath, 50, (128,32), 32)
 
-orcNetWork = ocr_model.OCRNetWork(num_classes=80, max_string_len=32, shape=(128, 64, 1), time_dense_size=64, GRU=True,
+orcNetWork = ocr_model.OCRNetWork(num_classes=80, max_string_len=32, shape=(128, 32, 1), time_dense_size=256, GRU=True,
                  n_units=256)
 model = orcNetWork.get_model(training=True)
 
