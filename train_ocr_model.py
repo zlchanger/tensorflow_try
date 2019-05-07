@@ -42,8 +42,8 @@ callbacks = [
 
 
 model.fit_generator(generator=loader.get_next_batch(downsample_factor=2**orcNetWork.pooling_counter_h),
-                    steps_per_epoch=1,
-                    epochs=5000,
+                    steps_per_epoch=5000,
+                    epochs=10,
                     callbacks=callbacks,
                     validation_data=loader.get_val_next_batch(downsample_factor=2*orcNetWork.pooling_counter_h),
-                    validation_steps=1)
+                    validation_steps=1000)
