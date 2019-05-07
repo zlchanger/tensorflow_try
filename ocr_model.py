@@ -12,7 +12,7 @@ from tensorflow import keras
 
 class OCRNetWork(object):
 
-    def __init__(self, num_classes=80, max_string_len=23, shape=(128, 32, 1), time_dense_size=256, GRU=False,
+    def __init__(self, num_classes=80, max_string_len=23, shape=(128, 32, 1), time_dense_size=64, GRU=False,
                  n_units=256):
         self.num_classes = num_classes
         self.shape = shape
@@ -52,7 +52,7 @@ class OCRNetWork(object):
         conv_to_rnn_dims = ((self.shape[0]) // (2 ** self.pooling_counter_h),
                             ((self.shape[1]) // (2 ** self.pooling_counter_w)) * 512)
         x = keras.layers.Reshape(target_shape=conv_to_rnn_dims, name='reshape')(x)  # 32x2048
-        x = keras.layers.Dense(self.time_dense_size, activation='relu', name='dense1')(x)  # 32x256 (time_dense_size)
+        x = keras.layers.Dense(self.time_dense_size, activation='relu', name='dense1')(x)  # 32x64 (time_dense_size)
         x = keras.layers.Dropout(0.4)(x)
 
         if not self.GRU:

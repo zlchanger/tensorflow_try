@@ -127,7 +127,6 @@ class DataLoader:
             input_length = np.ones((self.batchSize, 1))
             label_length = np.zeros((self.batchSize, 1))
 
-            log.logger.info("-----train------")
             for i in range(len(gtTexts)):
                 img = preprocess(cv2.imread(self.samples[self.currIdx + i].filePath, cv2.IMREAD_GRAYSCALE),
                                  self.imgSize,
@@ -165,7 +164,6 @@ class DataLoader:
             input_length = np.ones((self.batchSize, 1))
             label_length = np.zeros((self.batchSize, 1))
 
-            log.logger.info("-----val------")
             for i in range(len(gtTexts)):
                 img = preprocess(cv2.imread(self.valSamples[self.currIdxVal + i].filePath, cv2.IMREAD_GRAYSCALE),
                                  self.imgSize,
