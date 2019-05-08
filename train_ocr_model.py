@@ -24,7 +24,7 @@ orcNetWork = ocr_model.OCRNetWork(num_classes=80, max_string_len=32, shape=(128,
 model = orcNetWork.get_model(training=True)
 
 try:
-    model.load_weights('./checkPoints/LSTM+BN4--26--0.011.hdf5')
+    model.load_weights('./checkPoints/LSTM+BN5--13--4.133.hdf5')
     print("...Previous weight data...")
 except Exception:
     print("...New weight data...")
