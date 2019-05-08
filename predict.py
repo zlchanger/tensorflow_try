@@ -17,22 +17,22 @@ from SamplePreprocessor import preprocess
 import itertools
 from data_loader import DataLoader
 
-filePath = '../data/'
+filePath = './data/'
 
-loader = DataLoader(filePath, 50, (128,64), 32)
+loader = DataLoader(filePath, 5, (128,64), 32)
 
-orcNetWork = OCRNetWork(num_classes=80, max_string_len=32, shape=(128, 64, 1), time_dense_size=64, GRU=True,
+orcNetWork = OCRNetWork(num_classes=80, max_string_len=32, shape=(128, 32, 1), time_dense_size=64, GRU=True,
                         n_units=256)
 model = orcNetWork.get_model(training=False)
 
 try:
-    model.load_weights('../checkPoints/LSTM+BN5--16--5.787.hdf5')
+    model.load_weights('./checkPoints/LSTM+BN5--10--9.108.hdf5')
 except Exception:
     raise Exception("No weight file!")
 
-valid_file = '../data/words/p01/p01-147/p01-147-00-04.png'
+valid_file = './data/words/p01/p01-147/p01-147-00-04.png'
 
-img_pred = preprocess(cv2.imread(valid_file, cv2.IMREAD_GRAYSCALE), (128, 64), False)
+img_pred = preprocess(cv2.imread(valid_file, cv2.IMREAD_GRAYSCALE), (128, 32), False)
 img_pred = np.expand_dims(img_pred, axis=0)
 
 net_out_value = model.predict(img_pred)

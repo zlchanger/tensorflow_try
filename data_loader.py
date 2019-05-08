@@ -62,6 +62,10 @@ class DataLoader:
 
             # GT text are columns starting at 9
             gtText = self.truncateLabel(' '.join(lineSplit[8:]), maxTextLen)
+            if len(gtText) > 15:
+                print(gtText)
+                continue
+
             chars = chars.union(set(list(gtText)))
 
             if not os.path.getsize(fileName):
