@@ -17,7 +17,7 @@ from tensorflow import keras
 filePath = './data/'
 lr = 0.0001
 
-loader = data_loader.DataLoader(filePath, 1, (128,32), 32)
+loader = data_loader.DataLoader(filePath, 5, (128,32), 32)
 
 orcNetWork = ocr_model.OCRNetWork(num_classes=80, max_string_len=32, shape=(128, 32, 1), time_dense_size=64, GRU=True,
                  n_units=256)
@@ -43,7 +43,7 @@ callbacks = [
 
 model.fit_generator(generator=loader.get_next_batch(downsample_factor=2**orcNetWork.pooling_counter_h),
                     steps_per_epoch=5000,
-                    epochs=10,
+                    epochs=30,
                     callbacks=callbacks,
                     validation_data=loader.get_val_next_batch(downsample_factor=2*orcNetWork.pooling_counter_h),
                     validation_steps=1000)
