@@ -21,7 +21,7 @@ class OCRNetWork(object):
         self.GRU = GRU
         self.time_dense_size = time_dense_size
 
-    def depthwise_conv_block(self, inputs, pointwise_conv_filters, conv_size=(3, 3), pooling=None):
+    def depthwise_conv_block(self, inputs, pointwise_conv_filters, conv_size=(3, 3), pooling=None, training=True):
         x = keras.layers.DepthwiseConv2D((3, 3), padding='same', strides=(1, 1), depth_multiplier=1, use_bias=False)(
             inputs)
         x = keras.layers.BatchNormalization(axis=-1)(x)
@@ -35,25 +35,30 @@ class OCRNetWork(object):
                 self.pooling_counter_h += 1
             if pooling[1] == 2:
                 self.pooling_counter_w += 1
-        return keras.layers.Dropout(0.1)(x)
+
+        if training:
+            return keras.layers.Dropout(0.1)(x)
+        else:
+            return x
 
     def get_model(self,training):
         self.pooling_counter_h, self.pooling_counter_w = 0, 0
         inputs = keras.layers.Input(name='the_input', shape=self.shape, dtype='float32')  # 128x32x1
 
-        x = self.depthwise_conv_block(inputs, 64, conv_size=(3, 3), pooling=(2, 2))  # 64x16x64
-        x = self.depthwise_conv_block(x, 128, conv_size=(3, 3), pooling=(2, 1))  # 32x16x128
-        x = self.depthwise_conv_block(x, 256, conv_size=(3, 3), pooling=None)  # 32x16x256
-        x = self.depthwise_conv_block(x, 256, conv_size=(3, 3), pooling=(1, 2))  # 32x8x256
-        x = self.depthwise_conv_block(x, 512, conv_size=(3, 3), pooling=None)  # 32x8x512
-        x = self.depthwise_conv_block(x, 512, conv_size=(3, 3), pooling=(1, 2))  # 32x4x512
-        x = self.depthwise_conv_block(x, 512, conv_size=(3, 3), pooling=None)
+        x = self.depthwise_conv_block(inputs, 64, conv_size=(3, 3), pooling=(2, 2),training=training)  # 64x16x64
+        x = self.depthwise_conv_block(x, 128, conv_size=(3, 3), pooling=(2, 1),training=training)  # 32x16x128
+        x = self.depthwise_conv_block(x, 256, conv_size=(3, 3), pooling=None,training=training)  # 32x16x256
+        x = self.depthwise_conv_block(x, 256, conv_size=(3, 3), pooling=(1, 2),training=training)  # 32x8x256
+        x = self.depthwise_conv_block(x, 512, conv_size=(3, 3), pooling=None,training=training)  # 32x8x512
+        x = self.depthwise_conv_block(x, 512, conv_size=(3, 3), pooling=(1, 2),training=training)  # 32x4x512
+        x = self.depthwise_conv_block(x, 512, conv_size=(3, 3), pooling=None,training=training)
 
         conv_to_rnn_dims = ((self.shape[0]) // (2 ** self.pooling_counter_h),
                             ((self.shape[1]) // (2 ** self.pooling_counter_w)) * 512)
         x = keras.layers.Reshape(target_shape=conv_to_rnn_dims, name='reshape')(x)  # 32x2048
         x = keras.layers.Dense(self.time_dense_size, activation='relu', name='dense1')(x)  # 32x64 (time_dense_size)
-        x = keras.layers.Dropout(0.4)(x)
+        if training:
+            x = keras.layers.Dropout(0.4)(x)
 
         if not self.GRU:
             x = keras.layers.Bidirectional(
@@ -69,7 +74,8 @@ class OCRNetWork(object):
             x = keras.layers.Bidirectional(
                 keras.layers.GRU(self.n_units, return_sequences=True, kernel_initializer='he_normal'),
                 merge_mode='concat', weights=None)(x)
-        x = keras.layers.Dropout(0.2)(x)
+        if training:
+            x = keras.layers.Dropout(0.2)(x)
 
         x_ctc = keras.layers.Dense(self.num_classes, kernel_initializer='he_normal', name='dense2')(x)
         y_pred = keras.layers.Activation('softmax', name='softmax')(x_ctc)

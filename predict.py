@@ -26,11 +26,11 @@ orcNetWork = OCRNetWork(num_classes=80, max_string_len=32, shape=(128, 32, 1), t
 model = orcNetWork.get_model(training=False)
 
 try:
-    model.load_weights('./checkPoints/LSTM+BN5--10--9.108.hdf5')
+    model.load_weights('./checkPoints/LSTM+BN5--14--3.952.hdf5')
 except Exception:
     raise Exception("No weight file!")
 
-valid_file = './data/words/p01/p01-147/p01-147-00-04.png'
+valid_file = './imgs/2.jpg'
 
 img_pred = preprocess(cv2.imread(valid_file, cv2.IMREAD_GRAYSCALE), (128, 32), False)
 img_pred = np.expand_dims(img_pred, axis=0)
@@ -40,7 +40,7 @@ net_out_value = model.predict(img_pred)
 out_best = list(np.argmax(net_out_value[0, 2:], axis=1))  # get max index -> len = 32
 out_best2 = [k for k, g in itertools.groupby(out_best)]  # remove overlap value
 outstr = ''
-for i in out_best:
+for i in out_best2:
     if i < len(loader.charList):
         outstr += loader.charList[i]
 

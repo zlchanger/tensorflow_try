@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 # read image
 BLUE = [0, 0, 255]
-img = cv2.imread('./image/test.jpg')
+img = cv2.imread('../image/test.jpg')
 # hsv = cv2.cvtColor(img,cv2.COLOR_BGR2HSV)
 # ret,dst = cv2.threshold(img,200,255,cv2.THRESH_BINARY)
 
